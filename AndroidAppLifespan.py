@@ -1,16 +1,17 @@
-class ParseRobot:
-    def __init__(self, content):
-        self.content = content
+stored_data = []
 
-    def parse_the_input_file(self, content):
-        with open('logcat_applications.txt', 'rt') as myfile:
-            content = myfile.read()
-        print(content)
+def parse_the_input_file():
+    with open('logcat_applications.txt', 'rt') as myfile:
+        # content = myfile.read()
+        # print(content)
+        for myline in myfile:
+            if 'ActivityTaskManager: START u0' in myline:
+                stored_data.append(myline)
+            if 'Destroyed ActivityRecord' in myline:
+                stored_data.append(myline)
 
-    def search_for_specific_data(self):
-        pass
-
+def search_for_specific_data(self):
+    pass
 
 if __name__ == "__main__":
-    test = ParseRobot()
-    test.parse_the_input_file()
+    parse_the_input_file()
