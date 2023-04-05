@@ -33,7 +33,9 @@ def extract_specific_data():
             extracted_data[app] = {"app_path": app_path, "ts_app_started": start_date}
             start_element = datetime.datetime.strptime(start_date, "%m-%d %H:%M:%S.%f")
             start_timestamp = datetime.datetime.timestamp(start_element)
-            print(type(start_element))
+            start_elem_str = str(start_element)
+            x = start_elem_str.split(' ')
+            print (x[1])
         stop_timestamp = 0
         start_timestamp = 0
         if '/' in app_path:
@@ -43,7 +45,9 @@ def extract_specific_data():
                 extracted_data[app]['ts_app_closed'] = stop_date
                 stop_element = datetime.datetime.strptime(stop_date, "%m-%d %H:%M:%S.%f")
                 stop_timestamp = datetime.datetime.timestamp(stop_element)
-                print(stop_element)
+                stop_element_str = str(stop_element)
+                x = stop_element_str.split(' ')
+                print(x[1])
 
         # extracted_data[app]['lifespan'] = datetime.timedelta(stop_timestamp - start_timestamp)
 
