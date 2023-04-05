@@ -2,6 +2,7 @@ import re
 from pprint import pprint
 import time
 import datetime
+import sys
 
 stored_data = []
 extracted_data = {}
@@ -32,7 +33,7 @@ def extract_specific_data():
             extracted_data[app] = {"app_path": app_path, "ts_app_started": start_date}
             start_element = datetime.datetime.strptime(start_date, "%m-%d %H:%M:%S.%f")
             start_timestamp = datetime.datetime.timestamp(start_element)
-            # print(start_timestamp)
+            print(type(start_element))
         stop_timestamp = 0
         start_timestamp = 0
         if '/' in app_path:
@@ -42,11 +43,12 @@ def extract_specific_data():
                 extracted_data[app]['ts_app_closed'] = stop_date
                 stop_element = datetime.datetime.strptime(stop_date, "%m-%d %H:%M:%S.%f")
                 stop_timestamp = datetime.datetime.timestamp(stop_element)
-                # print(stop_timestamp)
+                print(stop_element)
 
-        extracted_data[app]['lifespan'] = stop_timestamp - start_timestamp
+        # extracted_data[app]['lifespan'] = datetime.timedelta(stop_timestamp - start_timestamp)
 
-    pprint(extracted_data)
+
+    # pprint(extracted_data)
     # for my_dict in extracted_data:
     #     print(my_dict)
 
