@@ -1,21 +1,22 @@
 import re
 from pprint import pprint
 import time
-import datetime
+from datetime import datetime
 import sys
 
 stored_data = []
 extracted_data = {}
-
+start_android_app = "ActivityTaskManager: START u0"
+stop_android_app = "Layer: Destroyed ActivityRecord"
 
 def parse_the_input_file():
     with open('logcat_applications.txt', 'rt') as myfile:
         # content = myfile.read()
         # print(content)
         for myline in myfile:
-            if 'ActivityTaskManager: START u0' in myline:
+            if start_android_app in myline:
                 stored_data.append(myline)
-            if 'Destroyed ActivityRecord' in myline:
+            if stop_android_app in myline:
                 stored_data.append(myline)
 
 
@@ -27,32 +28,28 @@ def extract_specific_data():
         # print(package)
         start_date = time.group(0)
         # print (start_date)
-        if time and package:
-            app = 'application_{}'.format(len(extracted_data) + 1)
+
+        if package and time:
             app_path = package.group(1)
-            extracted_data[app] = {"app_path": app_path, "ts_app_started": start_date}
-            start_element = datetime.datetime.strptime(start_date, "%m-%d %H:%M:%S.%f")
-            start_timestamp = datetime.datetime.timestamp(start_element)
-            start_elem_str = str(start_element)
-            x = start_elem_str.split(' ')
-            print (x[1])
-        stop_timestamp = 0
-        start_timestamp = 0
-        if '/' in app_path:
-            apps_value = app_path.split('/')[0]
-            if apps_value and 'Destroyed ActivityRecord' in line:
+            app = 'application_{}'.format(len(extracted_data) + 1)
+            extracted_data[app] = {"app_path": app_path, 'ts_app_started': start_date, 'ts_app_closed': None, 'lifespan': None}
+
+        else:
+            if stop_android_app in line:
+                pack = re.search(r"com.([\w.]+)", line)
                 stop_date = time.group(0)
-                extracted_data[app]['ts_app_closed'] = stop_date
-                stop_element = datetime.datetime.strptime(stop_date, "%m-%d %H:%M:%S.%f")
-                stop_timestamp = datetime.datetime.timestamp(stop_element)
-                stop_element_str = str(stop_element)
-                x = stop_element_str.split(' ')
-                print(x[1])
+                path = pack.group(0)
+                for applications in extracted_data.items():
+                    if path in applications[1]['app_path']:
+                        applications[1]['ts_app_closed'] = stop_date
+                        time_stop = datetime.strptime(stop_date, '%m-%d %H:%M:%S.%f')
+                        time_start = datetime.strptime(applications[1]['ts_app_started'], '%m-%d %H:%M:%S.%f')
+                        lifespan = time_stop - time_start
+                        applications[1]['lifespan'] = str(lifespan.total_seconds()) + "s"
 
-        # extracted_data[app]['lifespan'] = datetime.timedelta(stop_timestamp - start_timestamp)
 
 
-    # pprint(extracted_data)
+    pprint(extracted_data)
     # for my_dict in extracted_data:
     #     print(my_dict)
 
