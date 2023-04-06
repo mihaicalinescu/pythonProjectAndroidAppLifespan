@@ -2,7 +2,7 @@ import re
 from pprint import pprint
 import time
 from datetime import datetime
-import sys
+import yaml
 
 stored_data = []
 extracted_data = {}
@@ -57,5 +57,8 @@ def extract_specific_data():
 if __name__ == "__main__":
     parse_the_input_file()
     extract_specific_data()
+    file = open("data.yaml", "w")
+    yaml.dump(extracted_data, file)
+    file.close()
     # for data in stored_data:
     #     print (data)
